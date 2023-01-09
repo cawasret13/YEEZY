@@ -1,0 +1,44 @@
+.list_inv{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+.inv_card{
+    width: 200px;
+    height: 300px;
+    margin: 1%;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.inv_card img{
+    width: 100%;
+    height: 60%;
+    object-fit: contain;
+}
+.inv_name{
+    font-size: 16px;
+    margin: 0;
+}
+.inv_price{
+    margin: 0;
+}
+.global_name{
+    width: 96%;
+    height: 85%;
+    padding: 2%;
+}
+.func_btn{
+    width: 100%;
+    height: 15%;
+    display: inline-flex;
+    justify-content: space-between;
+}
+.btn_{
+    width: 50%;
+    height: 100%;
+    cursor: pointer;
+}

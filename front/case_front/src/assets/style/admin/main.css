@@ -1,0 +1,220 @@
+.flex_admin{
+    width: 100%;
+    height: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+    position: relative;
+}
+.fast_menu{
+    width: 15%;
+    height: 100%;
+    position: fixed;
+    background-color: rgb(27, 25, 34);
+    top: 0;
+    left: 0;
+    color: white;
+}
+.content_admin{
+    width: 85%;
+    height: 100%;
+    margin-left: 15%;
+    position: relative;
+}
+/* LIST */
+.title{
+    text-align: center;
+    /* margin-top: 0; */
+}
+table {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 14px;
+        border-radius: 10px;
+        border-spacing: 0;
+        text-align: center;
+        width: 90%;
+        margin: auto;
+    }
+    th {
+        background: #56545a;
+        color: white;
+        text-shadow: 0 1px 1px #2D2020;
+        padding: 10px 20px;
+    }
+    th, td {
+        border-style: solid;
+        border-width: 0 1px 1px 0;
+        border-color: white;
+    }
+    th:first-child, td:first-child {
+        text-align: left;
+    }
+    th:first-child {
+        border-top-left-radius: 10px;
+    }
+    th:last-child {
+        border-top-right-radius: 10px;
+        border-right: none;
+    }
+    td {
+        padding: 10px 20px;
+        background: #f3f3f3;
+    }
+    .cl_case:nth-child(2n){
+        background-color: #818083;
+    }
+    tr:last-child td:first-child {
+        border-radius: 0 0 0 10px;
+    }
+    tr:last-child td:last-child {
+        border-radius: 0 0 10px 0;
+    }
+    tr td:last-child {
+        border-right: none;
+    }
+    .img_case{
+        width: 200px;
+        height: 200px;
+        object-fit: contain;
+    }
+.cl_case{
+    cursor: pointer;
+}
+/* Настройка */
+.content{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.info_case_div{
+    width: 88%;
+    height: 250px;
+    margin: auto;
+    display: inline-flex;
+    padding: 1%;
+    border-radius: 13px;
+    box-shadow: 0 0 5px 1px #00000052;
+}
+.info_case_item_div{
+    width: 88%;
+    min-height: 600px;
+    margin: auto;
+    margin-top: 15px;
+    padding: 1%;
+    border-radius: 13px;
+    box-shadow: 0 0 5px 1px #00000052;
+}
+.icon_case{
+    height: 100%;
+    width: 30%;
+}
+.icon_case img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.info_case{
+    height: 100%;
+    width: 70%;
+}
+.pole{
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.name_fun{
+    margin: 0;
+    font-size: 18px;
+}
+.ls{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.inp_fun{
+    border: 2px solid black;
+    padding: 1%;
+    border-radius: 7px;
+}
+.title_items{
+    margin-top: 0;
+    text-align: center;
+}
+.bar_items{
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.bar_items img{
+    width: 20px;
+    height: 20px;
+    -o-object-fit: contain;
+    object-fit: contain;
+    padding: 0.5%;
+    background: #ddd;
+    border-radius: 7px;
+    cursor: pointer;
+}
+.addItem{
+    width: 98%;
+    padding: 1%;
+    height: 100%;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    background-color: white;
+}
+.main_add{
+    padding: 1%;
+}
+.ls_items{
+
+}
+.item_div{
+    width: 100%;
+    height: 100px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.item_div img{
+    height: 100%;
+    object-fit: contain;
+}
+.item_name{
+    width: 20%;
+}
+.item_price{
+    width: 20%;
+}
+.saveBar{
+    width: 100%;
+    background-color: white;
+    height: 50px;
+    position: sticky;
+    bottom: 0;
+    margin-top: 10px;
+    box-shadow: 0px -2px 8px #0000004a;
+}
+
+.createCase{
+    width: 50%;
+    padding: 1%;
+    border-radius: 13px;
+    margin: auto;
+    box-shadow: 0px -2px 8px #0000004a;
+}
+.name_cr{
+    font-size: 16px;
+}
+.cell_cr{
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+}
