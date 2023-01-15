@@ -12,7 +12,15 @@
                 </div>
             </div>
             <div class="cell_play">
-                {{ status }}
+                <div class="resualt_upgrade" v-if="status == true">
+                    <firework v-if="status == true" />
+                    <img class="img_win" :src="win_item.img" alt="">
+                    <h3 class="name_win">{{ win_item.name }}</h3>
+                    <h4 class="price_win">{{ win_item.price }}</h4>
+                </div>
+                <div v-if="status == false" class="war">
+                    <h3 class="err">Увы...</h3>
+                </div>
                 <div class="playUpgrade">
                     <div class="pie-chart" id="banner"></div>
                     <img class="backPlay" src="../assets/middleBiz1.svg" alt="">
@@ -41,7 +49,7 @@
                         <h1 class="proc">{{ (from_item!=0&&to_item!=0)?coefPlay+'%':'' }}</h1>
                     </div>
                 </div>
-                <button class="btn_play" v-on:click="play()" v-if="!start">Крутить</button>
+                <button class="btn_play" v-on:click="spin()" v-if="!start">Крутить</button>
             </div>
             <div class="cell left_cell none_display">
                 <div class="item_to">
@@ -76,9 +84,11 @@
             </div>
             <div class="cell_list">
                 <div class="filter">
-
+                    <input type="text" placeholder="от" v-model="search_min" v-on:change="search()">
+                    <input type="text" placeholder="до" v-model="search_max" v-on:change="search()">
+                    <input type="text" placeholder="название" v-model="search_name" v-on:change="search()">
                 </div>
-                <div class="list_items">
+                <div class="list_items" v-if="items.length != 0">
                     <div v-for="item, index in items" class="pl_item">
                         <img class="bg_item" src="@/assets/back_item.svg" alt="">
                         <img class="pl_item_img" :src="item.img" alt="">
@@ -92,41 +102,41 @@
                         <div class="select_a" v-bind:class="index == to_id?'active':'diacrive'"></div>
                     </div>
                 </div>
+                <div v-else class="war">
+                    <h1 class="err">Предметы с такими параметрами не найдены</h1>
+                </div>
             </div>
         </div>
     </div>
 </template>
 <script>
+    import firework from '@/components/fire.vue'
     export default{
         methods:{
-            play(){
-                let formData = new FormData();
-                formData.append('token', localStorage.getItem('token'));
-                formData.append('proc', this.coefPlay);
-
-                formData.append('from', this.inventory[this.from_id]['id']);
-                formData.append('to', this.items[this.to_id]['id']);
-                fetch('http://192.168.1.68:8000/api/v1/upgrade',{
-                    method: "POST",
-                    body: formData
-                }).then(data=>data.json()).then(save=>{
-                    save = JSON.parse(save)
-                    this.status = save['status']
-                    this.showBar(save['pi'], JSON.parse(save['items']))
-                });
-            },
-            showBar(status, data){
+            showBar(start, cursor, status, win_item, inventory){
                 this.start = true
+                this.status = null
                 const cur = document.getElementById('cur')
-                cur.style.transform = 'rotate(' + ( status ) + 'deg)';
+                const banner = document.getElementById('banner')
+                cur.style.transition = '5s ease'
+                banner.style.transform = 'rotate(' + ( start ) + 'deg)';
+                cur.style.transform = 'rotate(' + ( cursor ) + 'deg)';
                 cur.addEventListener("transitionend", ()=>{
+
+                    cur.style.transition = 'none'
+                    cur.classList.add('no-animation');
                     cur.style.transform = 'rotate(' + 0 + 'deg)';
+                    cur.offsetHeight;
+                    cur.classList.remove('no-animation');
+                    
                     this.start=false
                     this.from_id = null
                     this.to_id = null
                     this.from_item = 0
                     this.to_item = 0
-                    this.inventory = data
+                    this.status = status
+                    this.win_item = win_item
+                    this.inventory = inventory
                 }, false);
             },
             addItem(price, state, id){
@@ -137,17 +147,63 @@
                     this.to_item = price
                     this.to_id = id
                 }
-                if(Math.floor(parseFloat((this.from_item/this.to_item)*100) * 10) / 10 > 70){
+                if(Math.floor(parseFloat((this.from_item/this.to_item)*100) * 10) / 10 > 75){
                     this.coefPlay = 75
                 }else{
                     this.coefPlay = Math.floor(parseFloat((this.from_item/this.to_item)*100) * 10) / 10;
                 }
+                this.win_item = {}
+                this.status = null
                 const banner = document.getElementById('banner')
                 banner.style.setProperty('--value', this.coefPlay + '%');
+            },
+
+            WS_INVENTORY(){
+                let _t = this
+                _t.socket.onopen = function () {
+                    _t.socket.send(
+                        JSON.stringify({
+                            pk: localStorage.getItem('token'),
+                            action: "user_items",
+                            request_id: new Date().getTime(),
+                        })
+                    );
+                }
+            },
+            search(){
+                let _t = this
+                _t.socket.send(
+                    JSON.stringify({
+                        pk: {
+                            "max":this.search_max,
+                            "min":this.search_min,
+                            "name":this.search_name
+                        },
+                        action: "get_items",
+                        request_id: new Date().getTime(),
+                    })
+                );
+            },
+            spin(){
+                let _t = this
+                _t.socket.send(
+                    JSON.stringify({
+                        pk: {
+                            "token":localStorage.getItem('token'),
+                            "item_from":_t.inventory[_t.from_id]['id'],
+                            "item_to":_t.items[_t.to_id]['id']
+                        },
+                        action: "spin",
+                        request_id: new Date().getTime(),
+                    })
+                );
             }
+
         },
         data(){
                 return{
+                    socket:null,
+
                     coefPlay:0,
                     start:false,
                     from_item:0,
@@ -156,16 +212,36 @@
                     from_id:null,
                     inventory:[],
                     items:[],
-                    status:'',
+                    status:null,
+
+                    win_item:{},
+
+                    search_max:null,
+                    search_min:null,
+                    search_name:null,
                 }
         },
         created(){
-            fetch('http://192.168.1.68:8000/api/v1/upgrade?token='+localStorage.getItem('token')).then(res=>res.json()).then(data=>{
+            const _t = this
+            this.socket = new WebSocket(`ws://${window.location.hostname}:8000/ws/upgrade/`)
+            this.socket.onmessage = function (e) {
+                var data = JSON.parse(e.data)
                 data = JSON.parse(data)
-                this.inventory = JSON.parse(data['inventory'])
-                this.items = JSON.parse(data['items'])
-
-            })
+                console.log(data['action']);
+                if(data['action'] == 'user_items'){
+                    _t.inventory = JSON.parse(data['inventory'])
+                }
+                if(data['action'] == 'get_items'){
+                    _t.items = JSON.parse(data['items'])
+                }
+                if(data['action'] == 'spin'){
+                    _t.showBar(data['start'], data['cursor'], data['status'], (data['res_item']), (JSON.parse(data['inventory'])))
+                }
+            }
+            this.WS_INVENTORY()
         },
+        components:{
+            firework,
+        }
     }
 </script>

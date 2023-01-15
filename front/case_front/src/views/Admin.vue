@@ -34,6 +34,19 @@
                 id_case: this.$route.query.id_case,
             }
         },
+        created(){
+            // let formData = new FormData();
+            // formData.append('token', localStorage.getItem('token'));
+            // fetch(`http://${window.location.hostname}:8000/api/v1/auth/status`,{
+            //     method: "POST",
+            //     body: formData,
+            // }).then(res=>res.json()).then(data=>{
+            //     console.log(data);
+            //     if (data == false){
+            //         location.replace('/')
+            //     }
+            // })
+        }
     }
 </script>
 <style>

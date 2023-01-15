@@ -200,6 +200,7 @@ table {
     bottom: 0;
     margin-top: 10px;
     box-shadow: 0px -2px 8px #0000004a;
+    z-index: 25;
 }
 
 .createCase{

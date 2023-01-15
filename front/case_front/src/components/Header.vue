@@ -1,4 +1,10 @@
 <template>
+    <div class="money" v-bind:class="active_money?'on_money':'off_money'">
+        <div class="money_btn_off" v-on:click="active_money=false"></div>
+        <div class="money_window">
+
+        </div>
+    </div>
     <div class="header">
         <div class="main">
             <div class="logo">
@@ -21,7 +27,7 @@
                 </div>
                 <div class="us_info">
                     <p>{{ getUserInfo.name }}</p>
-                    <p>{{ getUserInfo.money }} ₽</p>
+                    <p v-on:click="active_money=true" style="cursor: pointer;">{{ getUserInfo.money }} ₽</p>
                 </div>
             </div>
             <div class="user" v-else>
@@ -89,12 +95,13 @@
                 active_menu:false,
 
                 active_history:false,
+                active_money:false,
             }
         },
         computed: mapGetters(['getToken', 'getUserInfo']),
         mounted(){
             var _t = this
-            this.socket = new WebSocket('ws://192.168.1.68:8000/ws/chat/');
+            this.socket = new WebSocket(`ws://${window.location.hostname}:8000/ws/chat/`);
             this.socket.onmessage = function(e){
                 var ddata = JSON.parse(e.data)
                 if (ddata['action'] == 'money'){
@@ -110,7 +117,7 @@
             let formData = new FormData();
             formData.append('token', localStorage.getItem('token'));
             if(localStorage.getItem('token') != null){
-                fetch(`http://192.168.1.68:8000/api/v1/auth`,{
+                fetch(`http://${window.location.hostname}:8000/api/v1/auth`,{
                     method: "POST",
                     body: formData,
                 }).then(res=>res.json()).then(data=>{

@@ -75,7 +75,7 @@
         },
         mounted(){
            let _this = this
-           _this.socket = new WebSocket('ws://192.168.1.68:8000/ws/case/')
+           _this.socket = new WebSocket(`ws://${window.location.hostname}:8000/ws/case/`)
            _this.socket.onmessage = function(e){
                 var data = JSON.parse(e.data)
                 _this.list = JSON.parse(data)['items']

@@ -26,7 +26,7 @@
         },
         methods:{
             load_list(){
-                fetch('http://192.168.1.68:8000/api/v1/admin/items/list').then(res=>res.json()).then(data=>{
+                fetch(`http://${window.location.hostname}:8000/api/v1/admin/items/list`).then(res=>res.json()).then(data=>{
                     this.list = JSON.parse(data)
                 })
             },
@@ -37,7 +37,7 @@
                 let formData = new FormData();
                 formData.append('file', this.$refs.file[file].files[0]);
                 formData.append('id', id);
-                fetch('http://192.168.1.68:8000/api/v1/admin/items/list',{
+                fetch(`http://${window.location.hostname}:8000/api/v1/admin/items/list`,{
                     method: "POST",
                     body: formData
                 }).then(data=>data.json()).then(save=>{

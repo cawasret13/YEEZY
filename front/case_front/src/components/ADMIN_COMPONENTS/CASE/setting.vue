@@ -1,4 +1,5 @@
 <template>
+    <PopUp :close="close" v-on:keyup.esc = 'close = false' />
     <transition name="bounce">
         <div v-if="createPanel" class="addItem">
             <div class="main_add">
@@ -61,12 +62,23 @@
                 </div>
             </div>
 
+            <div class="info_case_div" v-if="onGrath">
+                <Line id="grath" :data="data" :options="options" />
+            </div>
+            <div class="info_case_div" v-if="onGrath">
+                <Bar
+                    id="my-chart-id"
+                    :options="options"
+                    :data="chartData"
+                />
+            </div>
+            
             <div class="info_case_item_div">
                 <div class="bar_items">
                     <h1 class="title_items">Предметы</h1>
                     <img v-on:click="createPanel = true" src="../../../assets/free-icon-plus-1828819.png" alt="">
                 </div>
-                <div>
+                <div style="width: 100%;">
                     <table>
                         <tr>
                             <th>Название</th>
@@ -89,36 +101,85 @@
             </div>
         </div>
         <div class="saveBar" v-on:click="save()">
+            <button v-on:click="close=!close">Тестирование кейса</button>
             <button>Сохранить</button>
         </div>
 </template>
 
 <script>
+    import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    BarElement
+    } from 'chart.js'
+    import { Line, Bar } from 'vue-chartjs'
 
+    ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    BarElement,
+    )
+
+
+    import PopUp from '@/components/ADMIN_COMPONENTS/CASE/popUp.vue'
     export default{
         data(){
             return{
+                socket: null,
+
                 info:[],
 
                 showoldprice:false,
                 createPanel:false,
                 block:[],
+
+                close:false,
+                onGrath:false,
+
+                data: {
+                    labels: [1,2,3],
+                    datasets: [
+                        {
+                            label: 'Прибыль',
+                            backgroundColor: '#2ecc71',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            data: [1, 2, 1]
+                        },
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                },
+                chartData: {
+                    labels: [],
+                    datasets: [ { 
+                        label: 'По дням',
+                        backgroundColor: '#2ecc71',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        data: [] 
+                    } ]
+                },
             }
         },
+        components:{
+            PopUp,
+            Line,
+            Bar
+        },
         methods:{
-            getInfoCase(){
-                fetch('http://192.168.1.68:8000/api/v1/admin/case/update?id_case='+this.$route.query.id_case).then(res=>res.json()).then(data=>{
-                    this.info = JSON.parse(data)
-                    this.info.items = JSON.parse(this.info.items)
-                    this.info.data = JSON.parse(this.info.data)
-                    var items = this.info.items
-                    for(var k in items){
-                        for(var item in items[k]){
-                            this.block.push(items[k][item]['id'])
-                        }
-                    }
-                })
-            },
             exit(){
                 location.replace('/admin/case/list')
             },
@@ -159,16 +220,61 @@
                     console.log(data)
                     // ctx.state.info_settings = JSON.parse(data)[0]
                     })
+            },
+            getCase(){
+                let _t = this
+                _t.socket.onopen = function () {
+                    _t.socket.send(
+                        JSON.stringify({
+                            pk: _t.$route.query.id_case,
+                            action: "join_admin_case",
+                            request_id: new Date().getTime(),
+                        })
+                    );
+                }
+            },
+            grath(grath){
+                this.data.labels = JSON.parse(grath['labels'])
+                this.data.datasets[0].data = JSON.parse(grath['data'])
+                this.chartData.labels = JSON.parse(grath['days'])
+                this.chartData.datasets[0].data = JSON.parse(grath['volue_day'])
+                this.onGrath = true
             }
         },
+        
         created(){
-            this.getInfoCase()
+            let _this = this
+            _this.socket = new WebSocket(`ws://${window.location.hostname}:8000/ws/admin/case`);
+            _this.socket.onmessage = function(e){
+                var ddata = JSON.parse(e.data)
+                ddata = JSON.parse(ddata)
+                if(ddata['action'] == 'result'){
+                    var data = JSON.parse(ddata['data'])
+                    _this.info = data
+                    _this.info.items = JSON.parse(_this.info.items)
+                    _this.info.data = JSON.parse(_this.info.data)
+                    var items = _this.info.items
+                    for(var k in items){
+                        for(var item in items[k]){
+                            _this.block.push(items[k][item]['id'])
+                        }
+                    }
+
+                    var grath = JSON.parse(ddata['grath'])
+                    _this.grath(grath)
+                }
+            }
+            this.getCase()
         }
     }
 
 </script>
 
 <style scoped>
+    .info_case_div{
+        background-color: white;
+        margin-top: 5px;
+    }
     .bar_name{
         width: 100%;
         position: relative;

@@ -31,7 +31,7 @@
         },
         mounted(){
             var _t = this
-            this.socket = new WebSocket('ws://192.168.1.68:8000/ws/user/inventory');
+            this.socket = new WebSocket(`ws://${window.location.hostname}:8000/ws/user/inventory`);
             this.socket.onmessage = function(e){
                 var ddata = JSON.parse(e.data)
                 if (ddata['action'] = 'inventory'){

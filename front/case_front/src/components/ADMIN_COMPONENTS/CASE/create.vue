@@ -44,7 +44,7 @@
                 formData.append('file', file);
                 formData.append('name', this.name);
                 formData.append('price', this.price);
-                fetch('http://192.168.1.68:8000/api/v1/admin/case/update',{
+                fetch(`http://${window.location.hostname}:8000/api/v1/admin/case/update`,{
                     method: "POST",
                     body: formData
                 }).then(data=>data.json()).then(save=>{

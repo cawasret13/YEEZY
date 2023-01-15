@@ -1,5 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+const exitGuard = function(to, from, next){
+  let formData = new FormData();
+  formData.append('token', localStorage.getItem('token'));
+  fetch(`http://${window.location.hostname}:8000/api/v1/auth/status`,{
+      method: "POST",
+      body: formData,
+  }).then(res=>res.json()).then(data=>{
+    if(!data) next ({name: "home"});
+    else next()
+  })
+}
+
 const routes = [
   {
     path: '',
@@ -18,12 +30,14 @@ const routes = [
   },
   {
     path: '/admin',
-    redirect: '/admin/case/list'
+    redirect: '/admin/case/list',
+    beforeEnter:exitGuard,
   },
   {
     path: '/admin/:category/:function',
     name: 'admin',
-    component: ()=> import('@/views/Admin.vue')
+    component: ()=> import('@/views/Admin.vue'),
+    beforeEnter:exitGuard,
   },
   {
     path: '/inventory',

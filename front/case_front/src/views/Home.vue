@@ -27,7 +27,7 @@
         computed: mapGetters(['getToken']),
         created(){
             let _this = this
-            _this.socket = new WebSocket('ws://192.168.1.68:8000/ws/chat/');
+            _this.socket = new WebSocket(`ws://${window.location.hostname}:8000/ws/chat/`);
             _this.socket.onmessage = function(e){
                 var ddata = JSON.parse(e.data)
                 _this.list = JSON.parse(ddata)

@@ -22,7 +22,7 @@
 <script>
     export default{
         created(){
-            fetch('http://192.168.1.68:8000/api/v1/admin/items/create').then(data=>data.json()).then(res=>{
+            fetch(`http://${window.location.hostname}:8000/api/v1/admin/items/create`).then(data=>data.json()).then(res=>{
                 this.list = JSON.parse(res)
             })
         },
@@ -47,7 +47,7 @@
             save(){
                 let formData = new FormData();
                 formData.append('data', JSON.stringify(this.listAdd));
-                fetch('http://192.168.1.68:8000/api/v1/admin/items/create',{
+                fetch(`http://${window.location.hostname}:8000/api/v1/admin/items/create`,{
                     method: "POST",
                     body: formData
                 }).then(data=>data.json()).then(save=>{

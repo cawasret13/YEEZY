@@ -19,7 +19,7 @@
             let formData = new FormData();
             formData.append('token', localStorage.getItem('token'));
             if(localStorage.getItem('token') != null){
-                fetch(`http://192.168.1.68:8000/api/v1/auth`,{
+                fetch(`http://${window.location.hostname}:8000/api/v1/auth`,{
                     method: "POST",
                     body: formData,
                 }).then(res=>res.json()).then(data=>{

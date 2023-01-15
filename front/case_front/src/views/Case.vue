@@ -32,7 +32,7 @@
         },
         created(){
             let _t = this
-            this.socket = new WebSocket('ws://192.168.1.68:8000/ws/case/')
+            this.socket = new WebSocket(`ws://${window.location.hostname}:8000/ws/case/`)
             this.socket.onmessage = function (e) {
                 var data = JSON.parse(e.data)
                 _t.info_case = JSON.parse(data)

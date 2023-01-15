@@ -29,7 +29,7 @@
         },
         methods:{
             load_list(){
-                fetch('http://192.168.1.68:8000/api/v1/admin/case/list').then(res=>res.json()).then(data=>{
+                fetch(`http://${window.location.hostname}:8000/api/v1/admin/case/list`).then(res=>res.json()).then(data=>{
                     this.list = JSON.parse(data)
                 })
             }   
