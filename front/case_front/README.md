@@ -27,3 +27,7 @@ npm run dev
 ```sh
 npm run build
 ```
+
+```sh
+docker-run -p 0:6379:6379 — name redis -d redis
+```
