@@ -2,7 +2,7 @@
     <div class="money" v-bind:class="active_money?'on_money':'off_money'">
         <div class="money_btn_off" v-on:click="active_money=false"></div>
         <div class="money_window">
-
+            <button v-on:click="addMoney">Пополнить на 1000</button>
         </div>
     </div>
     <div class="header">
@@ -55,7 +55,7 @@
             </div>
             <div class="us_info">
                 <p>{{ getUserInfo.name }}</p>
-                <p>{{ getUserInfo.money }} ₽</p>
+                <p v-on:click="active_money=true" style="cursor: pointer;">{{ getUserInfo.money }} ₽</p>
             </div>
         </div>
         <div class="user mobile_user" v-else>
@@ -127,6 +127,18 @@
         },
         redirect(src){
             location.replace(`/${src}`)
+        },
+        addMoney(){
+            let _t = this
+            // _t.socket.onopen = function () {
+                _t.socket.send(
+                    JSON.stringify({
+                        pk: localStorage.getItem('token'),
+                        action: "addMoney",
+                        request_id: new Date().getTime(),
+                    })
+                )
+            // }
         }
        }
     }
